@@ -16,18 +16,21 @@ const storage = multer.diskStorage({
 });
 
 // limits це ліміт об'єму пам'ті котру користувач може використати 1Mb
-const upload = multer({ storage, limits: 1000000 }).single("demo_image");
+const upload = multer({ storage, limits: 1000000 });
 
 app.get("/", (req, res) => {
   console.log("Hello World!");
 });
 
-app.post("/image", (req, res) => {
-  upload(req, res, (err) => {
-    if (err) return res.status(400).send("Something went wrong");
-
-    res.status(200).send(req.file);
-  });
+// upload.array('demo_image', 4) 'demo_image' це ключ, 4 - це кіл-ть файлів
+app.post("/image", upload.array('demo_image', 4), (req, res) => {
+  try {
+   res.send(req.files)
+  } catch (e) {
+   console.log(e)
+   res.send(200)
+  }
+  
 });
 
 app.listen(port, () => {
